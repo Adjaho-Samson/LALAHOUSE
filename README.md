@@ -48,3 +48,15 @@ Les articles de départ sont regroupés dans `js/products.js` (`window.LALAHOUSE
 - Les tarifs et délais de livraison affichés sont indicatifs et à confirmer.
 - Les photographies générées sont des visuels d'ambiance, et non des photos certifiées des articles réellement vendus.
 - Les polices Google sont facultatives ; des polices système de remplacement sont prévues.
+
+## Refonte — signature éditoriale
+
+`css/editorial.css`, chargé après les styles responsive historiques, définit la nouvelle direction : ouverture sur une seule silhouette, titres de magazine, tons ivoire et olive, légendes éditoriales et catalogue épuré. Les photographies existantes sont conservées ; elles restent des visuels d’ambiance à remplacer par les photos réelles du stock.
+
+### Photo dans les commandes WhatsApp
+
+- Commander et réserver préremplissent le texte avec la référence, les préférences et **l’URL absolue de la photo**. Le client doit encore envoyer le message dans WhatsApp. Une éventuelle miniature dépend de WhatsApp et n’est pas garantie.
+- Le bouton « Partager avec la photo » apparaît uniquement si le navigateur accepte le partage de fichiers et si la photo a été chargée. Il ouvre le partage système : le client choisit WhatsApp et le contact LalaHouse. Le site ne peut pas imposer le destinataire à cette fonction. Certaines applications ne conservent pas le texte partagé avec un fichier.
+- Un lien de téléchargement permet aussi de joindre la photo manuellement.
+- Le partage natif nécessite généralement HTTPS et un appareil compatible. En cas d’annulation, la fiche reste ouverte ; en cas d’échec, la commande classique reste disponible.
+- En production, les images doivent être publiquement accessibles sur le même hébergement. Les liens d’un aperçu temporaire ne conviennent pas aux commandes réelles. Aucun service serveur ni accès à un compte WhatsApp n’a été ajouté.
