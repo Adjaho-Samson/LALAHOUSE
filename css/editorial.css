@@ -1,5 +1,9 @@
 /* Collection éditoriale — une silhouette, une signature. */
 :root { --creme: #f8f6f1; --lavande: #874331; --lavande-texte: #874331; }
+/* Des angles doux pour les photographies, sans arrondir toute l'interface. */
+.hero-photo { border-radius: 16px; }
+.univers-card, .creation-image, .story-media img { border-radius: 14px; }
+.story-media::before { border-radius: 14px; }
 .announcement { background: #252720; }
 .site-header { background: var(--creme); }
 .logo-mark { font-size: 34px; letter-spacing: -.065em; }
