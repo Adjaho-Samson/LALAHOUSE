@@ -15,6 +15,8 @@
 
   let activeCategory = 'all';
   let toastTimer;
+  let shareFile = null;
+  let productRequest = 0;
 
   const formatPrice = (price) => `${new Intl.NumberFormat('fr-FR').format(price)} FCFA`;
   const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -135,6 +137,9 @@
     const product = products.find((item) => item.id === id);
     if (!product || !dialog || !dialogContent) return;
 
+    shareFile = null;
+    const request = ++productRequest;
+
     dialogContent.innerHTML = `<div class="modal-media"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.alt)}"></div>
       <div class="modal-body">
         <span class="category-label">${escapeHTML(product.categoryLabel)}</span>
@@ -170,9 +175,26 @@
           <p class="visual-disclaimer">Les visuels sont des images d'ambiance. Le modèle, la taille, la couleur et la disponibilité sont à confirmer par message.</p>
           <button class="btn btn-dark dialog-order" type="submit" data-intent="commander">Commander sur WhatsApp <span aria-hidden="true">↗</span></button>
           <button class="btn btn-line dialog-reserve" type="submit" data-intent="reserver">Réserver cet article <span aria-hidden="true">↗</span></button>
+          <button class="btn btn-line dialog-share" type="submit" data-intent="share" hidden>Partager avec la photo ↗</button>
+          <a class="photo-download" href="${escapeHTML(product.image)}" download="${escapeHTML(product.id)}.jpg">Télécharger la photo ↓</a>
+          <p class="share-help">La commande WhatsApp inclut le lien de la photo, pas de pièce jointe automatique. Si le partage photo est proposé, choisissez WhatsApp puis le contact LalaHouse : +229 01 44 60 39 10. Selon l’appareil, le texte peut devoir être envoyé séparément.</p>
           <p class="no-payment">Aucun paiement n'est effectué sur le site.</p>
         </form>
       </div>`;
+
+    // Préparer le fichier avant le clic pour préserver l’activation utilisateur du partage natif.
+    if (navigator.canShare && navigator.share) {
+      fetch(product.image).then((response) => {
+        if (!response.ok) throw new Error('Photo indisponible');
+        return response.blob();
+      }).then((blob) => {
+        const file = new File([blob], `${product.id}.jpg`, { type: blob.type || 'image/jpeg' });
+        if (request !== productRequest || !navigator.canShare({ files: [file] })) return;
+        shareFile = file;
+        const button = dialogContent.querySelector('.dialog-share');
+        if (button) button.hidden = false;
+      }).catch(() => { /* Le lien photo et le téléchargement restent disponibles. */ });
+    }
 
     if (typeof dialog.showModal === 'function') {
       if (!dialog.open) dialog.showModal();
@@ -190,7 +212,7 @@
     document.body.classList.remove('dialog-open');
   }
 
-  function handleOrder(event) {
+  async function handleOrder(event) {
     event.preventDefault();
     const form = event.target.closest('#order-form');
     if (!form || !form.reportValidity()) return;
@@ -199,8 +221,16 @@
     const data = new FormData(form);
     const intent = event.submitter?.dataset.intent || 'commander';
     const verb = intent === 'reserver' ? 'réserver' : 'commander';
-    const message = `Bonjour LalaHouse,\n\nJe souhaite ${verb} cet article :\n\nProduit : ${product.name}\nPrix : ${formatPrice(product.price)}\nTaille : ${data.get('size')}\nCouleur : ${data.get('color')}\nQuantité : ${data.get('quantity')}\n\nMerci de me confirmer sa disponibilité et les modalités de livraison.\n\nJe note que la photo est un visuel d’ambiance et peut différer de l’article proposé.`;
-    showToast('Ouverture de WhatsApp…');
+    const message = `Bonjour LalaHouse,\n\nJe souhaite ${verb} cet article :\n\nProduit : ${product.name}\nRéférence : ${product.id}\nPrix : ${formatPrice(product.price)}\nTaille : ${data.get('size')}\nCouleur : ${data.get('color')}\nQuantité : ${data.get('quantity')}\n\nPhoto de l’article : ${new URL(product.image, document.baseURI).href}\n\nMerci de me confirmer sa disponibilité et les modalités de livraison.\n\nJe note que la photo est un visuel d’ambiance et peut différer de l’article proposé.`;
+    if (intent === 'share' && shareFile) {
+      try {
+        await navigator.share({ files: [shareFile], text: message, title: product.name });
+      } catch (error) {
+        if (error.name !== 'AbortError') showToast('Partage indisponible. Utilisez la commande WhatsApp ou téléchargez la photo.');
+      }
+      return;
+    }
+    showToast('Ouverture de WhatsApp avec le lien de la photo…');
     closeDialog();
     openWhatsApp(message);
   }
