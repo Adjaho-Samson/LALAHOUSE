@@ -4,11 +4,12 @@ Vitrine e-commerce statique en HTML, CSS et JavaScript vanilla. Aucun backend ni
 
 ## Design
 
-La direction artistique reprend celle de l'atelier [Trina Hook](https://trinahook.vercel.app/) :
+La direction artistique actuelle adopte un langage de **magazine de mode contemporain** : plus éditorial, sobre et centré sur les silhouettes.
 
-- **Palette** : noir profond `#100e12`, lavande `#c4a6d8`, bleu ciel `#9cc8da`, crème `#f6f1ea`, lavande clair `#eadff3`.
-- **Typographies** : Playfair Display (titres) et Jost (texte / interface), avec des polices système de remplacement.
-- **Composants** : barre d'annonce défilante, en-tête sombre, hero avec collage photo et badges flottants, bandeau incliné, cartes arrondies (univers, créations, savoir-faire, livraison), sections sombres, bouton WhatsApp flottant et fiche produit en fenêtre modale.
+- **Palette** : ivoire `#f7f5f0`, encre `#211f1b`, argile `#a6533d` et nuances sable.
+- **Typographies** : Cormorant Garamond (titres éditoriaux) et Jost (texte / interface), avec des polices système de remplacement.
+- **Composants** : navigation claire et discrète, hero typographique avec collage photo asymétrique, bandeau éditorial, cartes à angles droits, espaces généreux et appels à l'action contrastés.
+- **Principes UX** : priorité à la découverte des pièces, filtres conservés, prix lisibles, commande WhatsApp et livraison locale clairement expliquées.
 
 ### Lisibilité garantie
 
